@@ -1,0 +1,15 @@
+{
+  "name": "konverze-skript",
+  "description": "Nástroje pro převod ručně psaných přednáškových poznámek na sázená skripta",
+  "owner": {
+    "name": "Jan Červeňan",
+    "email": "cervenan@jiast.cz"
+  },
+  "plugins": [
+    {
+      "name": "konverze-skript",
+      "source": "./plugins/konverze-skript",
+      "description": "Věrný přepis skenů ručně psaných skript do Markdownu a LaTeXu, a sestavení knihy v LaTeXu"
+    }
+  ]
+}

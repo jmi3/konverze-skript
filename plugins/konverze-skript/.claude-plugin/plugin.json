@@ -1,0 +1,11 @@
+{
+  "name": "konverze-skript",
+  "displayName": "Konverze skript",
+  "version": "0.1.0",
+  "description": "Věrný přepis skenů ručně psaných skript do Markdownu a LaTeXu a sestavení knihy v LaTeXu",
+  "author": {
+    "name": "Jan Červeňan",
+    "email": "cervenan@jiast.cz"
+  },
+  "keywords": ["prepis", "skripta", "latex", "ocr", "vyuka"]
+}
