@@ -1,0 +1,9 @@
+% Testovací wrapper pro překlad jedné kapitoly:
+%   pdflatex -interaction=nonstopmode -halt-on-error -jobname=test_XX "\def\kapsoubor{kapitoly/XX}\input{test_kap.tex}"
+\documentclass[11pt,a4paper]{book}
+\input{preamble}
+\providecommand{\kapsoubor}{kapitoly/03}
+\begin{document}
+\chapter{Testovací překlad kapitoly}
+\input{\kapsoubor}
+\end{document}

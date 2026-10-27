@@ -1,0 +1,34 @@
+% Společná preambule skript (book + amsmath/amsthm)
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[czech]{babel}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{veta}{Věta}[section]
+\newtheorem{lemma}[veta]{Lemma}
+\newtheorem{dusledek}[veta]{Důsledek}
+\theoremstyle{definition}
+\newtheorem{definice}[veta]{Definice}
+\newtheorem{priklad}[veta]{Příklad}
+\theoremstyle{remark}
+\newtheorem{poznamka}[veta]{Poznámka}
+
+\providecommand{\uv}[1]{\quotedblbase #1\textquotedblleft}
+\shorthandoff{"}
+
+% Pojistka: doslovné Unicode symboly, kdyby se objevily v textu
+\DeclareUnicodeCharacter{2192}{\ensuremath{\rightarrow}}
+\DeclareUnicodeCharacter{2197}{\ensuremath{\nearrow}}
+\DeclareUnicodeCharacter{2198}{\ensuremath{\searrow}}
+\DeclareUnicodeCharacter{21D2}{\ensuremath{\Rightarrow}}
+\DeclareUnicodeCharacter{2212}{\ensuremath{-}}
+\DeclareUnicodeCharacter{2248}{\ensuremath{\approx}}
+\DeclareUnicodeCharacter{2264}{\ensuremath{\le}}
+\DeclareUnicodeCharacter{2265}{\ensuremath{\ge}}
+\DeclareUnicodeCharacter{221E}{\ensuremath{\infty}}

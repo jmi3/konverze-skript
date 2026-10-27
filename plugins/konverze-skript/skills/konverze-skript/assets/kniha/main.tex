@@ -1,0 +1,27 @@
+% ============================================================
+%  {{NAZEV_PREDMETU}}
+%  Konsolidovaná skripta z přepisu ručně psaných poznámek.
+%  Překlad: latexmk -pdf main.tex   /   pdflatex main.tex (2x)
+% ============================================================
+\documentclass[11pt,a4paper]{book}
+\input{preamble}
+
+\title{{{NAZEV_PREDMETU}}\\[1ex]
+  \large {{PODTITUL}}}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+% Jedna kapitola na zdrojové PDF, v pořadí původních PDF:
+\chapter{{{PLNY_NAZEV_KAPITOLY}}}
+\input{kapitoly/01}
+
+% Dodatky (např. přehled norem) za \appendix:
+% \appendix
+% \chapter{...}
+% \input{kapitoly/...}
+
+\end{document}
