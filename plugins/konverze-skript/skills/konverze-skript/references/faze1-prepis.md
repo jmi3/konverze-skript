@@ -1,13 +1,17 @@
 # Fáze 1: věrný přepis
 
 Cíl: každá stránka skenu → `transcripts/page-NN.md` (Markdown + LaTeX matematika) podle
-`<predmet>/KONVENCE.md`, nezávisle ověřená proti skenu; z kapitol pak `output/<id>.md`,
+obecné konvence a konvence projektu `<projekt>/KONVENCE.md` (má přednost), nezávisle
+ověřená proti skenu; z kapitol pak `output/<id>.md`,
 `output/<id>.tex` a kontrolní `output/<id>.pdf`.
 
 ## Příprava kapitoly
 
 1. Render stránek (šedotón, 300 DPI):
-   `python ${CLAUDE_PLUGIN_ROOT}/skills/konverze-skript/scripts/render_pages.py <pdf> <predmet>/prepis/kap_<id>/pages 300`
+   `python ${CLAUDE_PLUGIN_ROOT}/skills/konverze-skript/scripts/render_pages.py <pdf> <projekt>/prepis/kap_<id>/pages 300`
+
+`<projekt>` je kořen projektu a cesty uvnitř něj jsou doporučené; platí rozvržení
+schválené v plánu (SKILL.md, „Rozvržení výstupů“).
 2. Vytvořit prázdnou složku `transcripts/`.
 3. Scratch pro výřezy agentů: jedna sdílená složka mimo repozitář (scratchpad session).
    Názvy výřezů mají povinný prefix `<id>-pNN-` (verifikace `verif-<id>-pNN-`); bez něj
@@ -19,7 +23,8 @@ Jedna kapitola (6–10 stran) s větami, důkazy, rámečky i obrázkem. Pilot b
 workflow jako produkce, jen s jednou kapitolou. Po pilotu:
 
 - projít přepis s uživatelem (ukázat vzorek stránky vedle skenu),
-- doplnit oddíl „Zvyklosti autora“ v `KONVENCE.md` (diakritika, zvláštní značení, tabulky),
+- navrhnout uživateli pravidla do konvence projektu `<projekt>/KONVENCE.md` (zvyklosti
+  autora, diakritika, zvláštní značení, tabulky) a zapsat ta, která schválí,
 - sestavit kapitolu (viz níže) a ověřit, že se přeloží,
 - teprve na pokyn uživatele spustit další kapitoly.
 
@@ -29,19 +34,23 @@ Workflow `konverze-skript:prepis` (soubor `${CLAUDE_PLUGIN_ROOT}/workflows/prepi
 
 ```json
 {
-  "konvence": "<abs>/<predmet>/KONVENCE.md",
-  "scratch": "<abs scratchpad>",
-  "python": "<abs>/.venv/Scripts/python.exe",
+  "konvence": "${CLAUDE_PLUGIN_ROOT}/skills/konverze-skript/references/KONVENCE.md",
+  "konvenceProjektu": "<projekt>/KONVENCE.md",
+  "scratch": "<scratchpad session>",
+  "python": "<cesta k .venv>/Scripts/python.exe",
   "popis": "ručně psané české poznámky k přednášce <název> (<kód>)",
   "davka": 3,
   "model": "opus",
   "modelVerifikace": "opus",
   "kapitoly": [
-    { "id": "01", "dir": "<abs>/<predmet>/prepis/kap_01", "title": "<název kapitoly>", "pages": 10 }
+    { "id": "01", "dir": "<projekt>/prepis/kap_01", "title": "<název kapitoly>", "pages": 10 }
   ]
 }
 ```
 
+Všechny cesty v args musí být absolutní.
+
+- `konvenceProjektu` vynechat, pokud projekt vlastní konvenci nemá.
 - Stránky v kapitole jdou sekvenčně (návaznost přes `tail`), kapitoly v dávkách souběžně.
   Uživatel u NTMF057 výslovně chtěl dávky po třech kapitolách, ne všechny najednou.
 - Verifikace stránky startuje hned po jejím přepisu a běží souběžně s dalšími stranami.
@@ -66,6 +75,8 @@ Výsledek obsahuje u každé stránky `uncertainties` (nejistoty přepisovače, 
 2. U každého místa rozhodnout nad výřezem skenu: ponechat, nebo `[nečitelné: snad „X“]`.
    Sporné případy předložit uživateli; nic neopravovat podle smyslu.
 3. Zkontrolovat zásahy verifikace, které mění význam (negace symbolu, jazykové „opravy“).
+4. Opakuje-li se stejný typ nejistoty (autorova zkratka, symbol, rozvržení), navrhnout
+   pravidlo do konvence projektu.
 
 ## Sestavení kapitoly
 
@@ -84,7 +95,7 @@ Pasti a jejich příčiny: [pasti.md](pasti.md).
 ## Volitelné rozšíření: cvičení
 
 Obsahují-li poznámky cvičení, která se mají zároveň vyčlenit do cvičebnice, je možné
-přidat do `KONVENCE.md` pravidlo pro strojově čitelné značky
+přidat do konvence projektu pravidlo pro strojově čitelné značky
 `<!-- CVICENI zacatek | id=<id>-cvNN -->` … `<!-- CVICENI konec -->` a cvičebnici z nich
 poskládat skriptem. Navrženo pro NTMF061, dosud nevyzkoušeno; o použití rozhoduje uživatel
 před pilotem (značky musí být v konvenci už při přepisu).

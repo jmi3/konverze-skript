@@ -15,8 +15,11 @@ Fáze mají vlastní reference; mezi fázemi vždy rozhoduje uživatel.
 | 1 Přepis | `prepis/kap_<id>/output/<id>.md/.tex/.pdf` | [faze1-prepis.md](references/faze1-prepis.md) | `konverze-skript:prepis` |
 | 2 Kniha | `kniha/main.tex`, `kniha/main.pdf` | [faze2-kniha.md](references/faze2-kniha.md) | `konverze-skript:kniha` |
 
-Známé pasti a jejich ošetření: [pasti.md](references/pasti.md). Konvence přepisu:
-[KONVENCE.md](references/KONVENCE.md).
+Kořen pluginu: `${CLAUDE_PLUGIN_ROOT}`. Zápis `${CLAUDE_PLUGIN_ROOT}` v referenčních
+souborech znamená tuto cestu.
+
+Známé pasti a jejich ošetření: [pasti.md](references/pasti.md). Obecná konvence přepisu:
+[KONVENCE.md](references/KONVENCE.md); konvence projektu viz níže.
 
 ## Zásady
 
@@ -34,20 +37,34 @@ Známé pasti a jejich ošetření: [pasti.md](references/pasti.md). Konvence p�
   přečíst celý včetně selhání; stav „completed“ neznamená, že všichni agenti uspěli.
 - Odeslání výstupů a commity jen na výslovný pokyn uživatele.
 
-## Struktura projektu
+## Rozvržení výstupů
+
+Pevná struktura složek se nepředpokládá: session může běžet přímo ve složce s PDF,
+ve složce s více předměty nebo v rozpracovaném projektu. Rozvržení se **navrhuje podle
+nalezené struktury jako součást plánu** (fáze 0) a uživatel ho schválí.
+
+V referencích značí `<projekt>` kořen projektu zvolený v plánu, tedy složku, ve které
+leží výstupy převodu. Návrh vychází z toho, co session najde:
+
+- PDF přímo v pracovní složce → kořenem je tato složka, výstupy vedle PDF.
+- Složka s více předměty nebo sadami PDF → podsložka pro každý předmět.
+- Rozpracovaný převod (existují přepisy, kniha, konvence) → pokračovat v jeho struktuře.
+
+Doporučený obsah kořene (názvy přizpůsobit tomu, co ve složce už je, a nic nepřepsat):
 
 ```
-<koren>/                      např. konverze_skripta/ (více předmětů)
-├── .venv/                    Python: pymupdf, pillow, pypandoc_binary
-└── <kod>/                    kód předmětu malými písmeny, např. ntmf061
-    ├── zdroje/               původní PDF beze změny
-    ├── README.md             rozhodnutí: pořadí kapitol, zařazení PDF, modely, odchylky
-    ├── KONVENCE.md           kopie references/KONVENCE.md + zvyklosti autora
-    ├── prepis/kap_<id>/      pages/ (PNG), transcripts/ (page-NN.md), output/
-    └── kniha/                main.tex, preamble.tex, test_kap.tex, kapitoly/, figs/
+<projekt>/
+├── KONVENCE.md               konvence projektu (volitelná): jen odchylky a doplňky, má přednost
+├── README.md                 záznam rozhodnutí; existuje-li už jiný README, navrhnout jiný název
+├── prepis/kap_<id>/          pages/ (PNG), transcripts/ (page-NN.md), output/
+└── kniha/                    main.tex, preamble.tex, test_kap.tex, kapitoly/, figs/
 ```
 
-Prostředí (jednou na kořen):
+Zdrojová PDF zůstávají, kde jsou; přesouvat či přejmenovávat je jen se souhlasem uživatele.
+
+Python prostředí: použít existující `.venv` projektu, má-li potřebné balíčky; jinak
+v plánu navrhnout jeho umístění (typicky `<projekt>/.venv`, u více předmětů společné
+o úroveň výš) a založit ho:
 
 ```bash
 python -m venv .venv
@@ -57,19 +74,51 @@ python -m venv .venv
 (Na Linuxu a macOS `.venv/bin/python`.) Dále je potřeba `pdflatex`; chybí-li, dát
 uživateli přesný příkaz k instalaci, neinstalovat sám.
 
+## Konvence projektu
+
+Přepis se řídí dvěma soubory:
+
+1. **Obecná konvence** `${CLAUDE_PLUGIN_ROOT}/skills/konverze-skript/references/KONVENCE.md`
+   (součást pluginu, pro projekt se neupravuje),
+2. **konvence projektu** `<projekt>/KONVENCE.md` (volitelná). Obsahuje jen to, čím se projekt
+   liší nebo co doplňuje, a **má přednost**: kde si soubory odporují, platí konvence projektu.
+
+Workflow přepisu dostane obě cesty (`konvence`, `konvenceProjektu`). Konvence projektu se
+zakládá ze šablony `assets/KONVENCE.projekt.md`, až když je co do ní zapsat.
+
+Navrhnout zápis do konvence projektu, když:
+
+- se při inventuře, pilotu nebo triáži objeví něco specifického pro předmět či autora
+  (vlastní značení, opakující se zkratky, typ tabulek, rozvržení stránky, cvičení),
+- uživatel chce postupovat jinak, než předepisuje obecná konvence,
+- padne rozhodnutí z inventury, které se přepisu týká (např. diakritika).
+
+Návrh předložit uživateli jako konkrétní znění pravidla; zapsat až po jeho souhlasu.
+Obecnou konvenci pluginu kvůli jednomu projektu neměnit; je-li změna užitečná obecně,
+navrhnout ji zvlášť jako úpravu pluginu.
+
+Pravidlo přidané až po přepsání části stránek platí jen pro další běhy: už přepsané
+stránky je třeba projít znovu (nebo opravit ručně) a změna textu konvence ruší cache
+při navazování přes `resumeFromRunId`.
+
 ## Fáze 0: inventura (před jakoukoli prací)
 
 1. Zdroje: seznam PDF, počet stran (`pymupdf.open(p).page_count`), textová vrstva
    (`page.get_text()` prázdné = sken), prohlédnout jednu ukázkovou stranu.
+   Zároveň zmapovat strukturu pracovní složky: kde PDF leží, co už existuje (přepisy,
+   kniha, konvence, README, `.venv`), zda jde o jeden předmět, nebo o více.
 2. Pořadí: zjistit ze stránky předmětu nebo od uživatele, **ne** z čísel v názvech souborů
    (u NTMF061 se lišilo a čtyři PDF byla nečíslovaná).
 3. Druh obsahu: přednášky, cvičení, domácí úlohy, převzaté stránky z literatury.
 4. Odhad nákladů z naměřených dat (tabulka níže) pro skutečný počet stran a kapitol.
-5. Předložit uživateli očíslované otázky s doporučením:
-   pořadí a zařazení PDF; pilotní kapitola; dávkování (výchozí 3 kapitoly souběžně);
-   modely rolí; diakritika (doplňovat zjevně chybějící, nebo doslova); cvičení
-   (značky pro cvičebnici, viz faze1-prepis.md); které fáze se budou dělat.
-6. Rozhodnutí zapsat do `<kod>/README.md`. Teprve pak pilot.
+5. Předložit uživateli plán: **navržené rozvržení výstupů** (kořen projektu, cesty pro
+   přepisy, knihu, konvenci projektu, záznam rozhodnutí a `.venv`; viz „Rozvržení výstupů“)
+   a očíslované otázky s doporučením: pořadí a zařazení PDF; pilotní kapitola; dávkování
+   (výchozí 3 kapitoly souběžně); modely rolí; diakritika (doplňovat zjevně chybějící,
+   nebo doslova); cvičení (značky pro cvičebnici, viz faze1-prepis.md); které fáze se
+   budou dělat.
+6. Rozhodnutí zapsat do záznamu rozhodnutí v kořeni projektu; ta, která mění pravidla
+   přepisu, navrhnout do konvence projektu. Teprve pak pilot.
 
 ## Náklady (naměřeno u NTMF057, agenti Opus)
 

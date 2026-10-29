@@ -21,7 +21,8 @@ kapitoly, který uživatel schválí.
 ## Kostra
 
 1. Zkopírovat `${CLAUDE_PLUGIN_ROOT}/skills/konverze-skript/assets/kniha/`
-   (`main.tex`, `preamble.tex`, `test_kap.tex`) do `<predmet>/kniha/` a vyplnit `{{…}}`.
+   (`main.tex`, `preamble.tex`, `test_kap.tex`) do `<projekt>/kniha/` (nebo kam určil plán)
+   a vyplnit `{{…}}`.
    `main.tex`: `\chapter{…}` + `\input{kapitoly/<id>}` v pořadí, které schválil uživatel.
 2. Obrázky: `prepis/kap_<id>/output/figures/*.png` → `kniha/figs/k<id>/`.
 3. Stylová reference: jedna kapitola (nejlépe pilotní) přeformátovaná ručně nebo jedním
@@ -34,12 +35,12 @@ Workflow `konverze-skript:kniha` (`${CLAUDE_PLUGIN_ROOT}/workflows/kniha.js`), a
 
 ```json
 {
-  "kniha": "<abs>/<predmet>/kniha",
-  "reference": "<abs>/<predmet>/kniha/kapitoly/03.tex",
+  "kniha": "<projekt>/kniha",
+  "reference": "<projekt>/kniha/kapitoly/03.tex",
   "davka": 6,
   "model": "opus",
   "kapitoly": [
-    { "id": "01", "fig": "k01", "src": "<abs>/<predmet>/prepis/kap_01/output/01.md", "title": "<název>" }
+    { "id": "01", "fig": "k01", "src": "<projekt>/prepis/kap_01/output/01.md", "title": "<název>" }
   ]
 }
 ```

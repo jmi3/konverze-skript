@@ -14,10 +14,11 @@ plugins/konverze-skript/
 ├── .claude-plugin/plugin.json
 ├── skills/konverze-skript/
 │   ├── SKILL.md                     řídicí postup: inventura → přepis → kniha
-│   ├── references/                  konvence přepisu, postupy fází, pasti
+│   ├── references/                  obecná konvence přepisu, postupy fází, pasti
 │   ├── scripts/                     render_pages.py, kontrola_prepisu.py, crop_figures.py,
 │   │                                assemble.py, requirements.txt
-│   └── assets/kniha/                šablony knihy (main.tex, preamble.tex, test_kap.tex)
+│   └── assets/                      šablona konvence projektu (KONVENCE.projekt.md)
+│                                    a šablony knihy (kniha/main.tex, preamble.tex, test_kap.tex)
 └── workflows/
     ├── prepis.js                    přepis a verifikace stránek (/konverze-skript:prepis)
     └── kniha.js                     kapitoly knihy a kontrola obsahu (/konverze-skript:kniha)
@@ -43,9 +44,17 @@ ke klonu místo URL.
 ## Použití
 
 V projektu se skeny stačí zadat úlohu, např. „převeď skripta ve složce X“, nebo
-skill vyvolat přímo: `/konverze-skript:konverze-skript`. Skill nejprve provede
-inventuru, předloží odhad nákladů a otázky k rozhodnutí a teprve po schválení
-spouští přepis pilotní kapitoly.
+skill vyvolat přímo: `/konverze-skript:konverze-skript`. Pevná struktura složek se
+nepředpokládá: skill nejprve provede inventuru, podle nalezené struktury navrhne, kam
+bude výstupy ukládat, předloží odhad nákladů a otázky k rozhodnutí a teprve po
+schválení spouští přepis pilotní kapitoly.
+
+## Konvence
+
+Přepis se řídí obecnou konvencí pluginu (`references/KONVENCE.md`). Projekt může mít
+vlastní `KONVENCE.md` v kořeni projektu, která obsahuje jen odchylky a doplňky a má
+přednost. Skill navrhuje pravidla do ní, když narazí na něco specifického pro předmět
+nebo když uživatel chce postupovat jinak než obecná konvence.
 
 ## Náklady
 
