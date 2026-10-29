@@ -8,7 +8,8 @@ export const meta = {
 }
 
 // Vstup (args):
-//   konvence  absolutní cesta ke KONVENCE.md předmětu
+//   konvence  absolutní cesta k obecné konvenci (references/KONVENCE.md pluginu)
+//   konvenceProjektu  volitelně absolutní cesta ke KONVENCE.md projektu; má přednost před obecnou
 //   scratch   absolutní cesta ke složce pro pracovní výřezy
 //   python    interpret s PyMuPDF a Pillow (typicky .venv projektu)
 //   popis     jedna věta o pramenu, např. „ručně psané české poznámky k přednášce o teorii grup (NTMF061)“
@@ -28,6 +29,11 @@ function join(dir, ...parts) {
   return [dir.replace(/[\\/]+$/, ''), ...parts].join(sep)
 }
 
+// Odkaz na konvence do promptu: obecná vždy, projektová (s předností) jen je-li zadána.
+const KONVENCE = A.konvenceProjektu
+  ? 'obecná ' + A.konvence + ' a konvence projektu ' + A.konvenceProjektu + ' (přečti obě; konvence projektu má přednost — kde si odporují, platí ona)'
+  : A.konvence
+
 const TR_SCHEMA = {
   type: 'object',
   properties: {
@@ -43,7 +49,7 @@ function transcribePrompt(ch, pp, tail) {
   const out = join(ch.dir, 'transcripts', 'page-' + pp + '.md')
   let p = 'Jsi precizní přepisovač ručně psaných matematických poznámek. Tvým úkolem je věrně přepsat JEDNU stránku skenu do Markdownu s LaTeX matematikou.\n\n'
   p += 'Postup:\n'
-  p += '1. Přečti si konvence přepisu: ' + A.konvence + ' — řiď se jimi doslova.\n'
+  p += '1. Přečti si konvence přepisu: ' + KONVENCE + ' — řiď se jimi doslova.\n'
   p += '2. Přečti si obrázek stránky: ' + img + '\n'
   p += '3. Pokud si u některého místa nejsi jistý symbolem či slovem, vyřízni si detail pomocí Pythonu (' + A.python + ', PIL a PyMuPDF jsou nainstalované), ulož ho do ' + A.scratch + ' a znovu ho přečti nástrojem Read. Dělej to aktivně — přesnost je priorita. DŮLEŽITÉ: každý výřez ukládej pod unikátním názvem začínajícím "' + ch.id + '-p' + pp + '-", nikdy nepřepisuj existující název jiným obsahem.\n'
   p += '4. Zapiš věrný přepis celé stránky do souboru ' + out + ' (nástroj Write).\n\n'
@@ -62,7 +68,7 @@ function verifyPrompt(ch, pp) {
   const img = join(ch.dir, 'pages', 'page-' + pp + '.png')
   const tr = join(ch.dir, 'transcripts', 'page-' + pp + '.md')
   let p = 'Jsi nezávislý verifikátor přepisu ručně psaných matematických poznámek. Nepřepisuješ — hledáš rozdíly mezi skenem a hotovým přepisem.\n\n'
-  p += 'Podklady:\n- Konvence přepisu: ' + A.konvence + '\n- Sken stránky: ' + img + '\n- Přepis k ověření: ' + tr + '\n\n'
+  p += 'Podklady:\n- Konvence přepisu: ' + KONVENCE + '\n- Sken stránky: ' + img + '\n- Přepis k ověření: ' + tr + '\n\n'
   p += 'Postup:\n'
   p += '1. Přečti konvence, přepis a sken.\n'
   p += '2. Projdi sken shora dolů blok po bloku a u každého bloku ověř, že v přepisu existuje, je na správném místě a souhlasí doslova (text, symboly, indexy, meze sum/integrálů, znaménka).\n'

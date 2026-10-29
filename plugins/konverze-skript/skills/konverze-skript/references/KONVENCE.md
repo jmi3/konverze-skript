@@ -1,7 +1,7 @@
 # Konvence přepisu ručně psaných poznámek
 
-<!-- Obecná šablona. Pro každý předmět se kopíruje do <predmet>/KONVENCE.md a po pilotní
-     kapitole doplňuje o zvyklosti konkrétního autora (oddíl „Zvyklosti autora“). -->
+Obecná konvence platná pro všechny projekty. Má-li projekt vlastní konvenci
+(`KONVENCE.md` v kořeni projektu), má ta přednost: kde si odporují, platí konvence projektu.
 
 ## Základní princip: věrnost
 
@@ -61,8 +61,3 @@
 
 - Dostaneš-li konec přepisu předchozí stránky, plynule navaž — věta či rovnice může pokračovat přes zlom stránky. Nezačínej v takovém případě novou odrážkou ani nadpisem.
 - Neukončuj stránku žádným oddělovačem ani poznámkou o konci stránky.
-
-## Zvyklosti autora (doplňuje se po pilotu)
-
-- Diakritika: {{doplňovat zjevně chybějící čárky a háčky, nebo přepisovat doslova? rozhodnutí uživatele}}
-- …
